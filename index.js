@@ -1,15 +1,4 @@
 import './style.css';
-import {
-  Canvas,
-  Map,
-  GeoJSON,
-  Marker,
-  Icon,
-  LayerGroup,
-  CircleMarker,
-  FeatureGroup
-} from 'leaflet';
-import { MarkerClusterGroup } from './marker-cluster-group.js';
 
 // Write Javascript code!
 //创建高德Map
@@ -31,9 +20,7 @@ const amap = new AMap.Map('amap', {
   viewMode: '2D'
 });
 //创建Leaflet Map
-const map = new Map('map', {
-  maxZoom: 18
-});
+const map = new L.Map('map');
 
 map.on('zoom', evt => {
   amap.setZoom(evt.target.getZoom());
@@ -94,24 +81,20 @@ const data = {
 const svg =
   '<svg t="1621166776642" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1407" width="200" height="200"><path d="M512 85.333333c-164.949333 0-298.666667 133.738667-298.666667 298.666667 0 164.949333 298.666667 554.666667 298.666667 554.666667s298.666667-389.717333 298.666667-554.666667c0-164.928-133.717333-298.666667-298.666667-298.666667z m0 448a149.333333 149.333333 0 1 1 0-298.666666 149.333333 149.333333 0 0 1 0 298.666666z" fill="#FF3D00" p-id="1408"></path></svg>';
 
-const cluster = new MarkerClusterGroup();
-//const cluster = new FeatureGroup();
-data.features.forEach(feature => {
-  const marker = new Marker(
-    [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
-    {
-      icon: new Icon({
+const glayer5 = new L.GeoJSON(data, {
+  pointToLayer: (geoJsonPoint, latlng) => {
+    return new L.Marker(latlng, {
+      icon: new L.Icon({
         iconUrl: 'data:image/svg+xml,' + encodeURIComponent(svg),
         iconSize: [32, 32],
         iconAnchor: [16, 32]
       })
-    }
-  );
-  /*const marker = new CircleMarker([
-    feature.geometry.coordinates[1],
-    feature.geometry.coordinates[0]
-  ]);*/
-  cluster.addLayer(marker);
+    });
+  }
 });
 
-cluster.addTo(map);
+glayer5.addTo(map);
+
+map.pm.addControls({
+  position: 'topleft'
+});
